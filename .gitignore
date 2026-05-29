@@ -1,0 +1,25 @@
+# Virtual environment
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# uv
+uv.lock
+
+# IDE
+.idea/
+.vscode/
+
+# Pipeline runtime data
+processing_log.json
+chroma_db/
+
+# Source data (PDFs and converted files)
+source/pdf/*
+source/md/*
+source/md/img/*
+!source/pdf/.gitkeep
+!source/md/.gitkeep
+!source/md/img/.gitkeep
