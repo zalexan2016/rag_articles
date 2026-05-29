@@ -12,6 +12,9 @@ uv.lock
 .idea/
 .vscode/
 
+# Environment secrets
+.env
+
 # Pipeline runtime data
 processing_log.json
 chroma_db/
