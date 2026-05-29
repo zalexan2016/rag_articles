@@ -6,25 +6,25 @@
 
 ## Tasks
 
-- [ ] 1. Настройка конфигурации и зависимостей
-  - [ ] 1.1 Расширить config.py настройками бота и LLM
+- [x] 1. Настройка конфигурации и зависимостей
+  - [x] 1.1 Расширить config.py настройками бота и LLM
     - Добавить `from dotenv import load_dotenv` и `load_dotenv()` в начало файла
     - Добавить `import os` (если отсутствует)
     - Добавить настройки: TELEGRAM_BOT_TOKEN, DEEPSEEK_API_KEY, LLM_PROVIDER, DEEPSEEK_MODEL, DEEPSEEK_BASE_URL, OLLAMA_BASE_URL, OLLAMA_MODEL, RAG_TOP_K
     - Значения TELEGRAM_BOT_TOKEN и DEEPSEEK_API_KEY загружаются из .env через os.environ.get
     - _Requirements: 6.1, 6.2, 6.3, 7.2_
 
-  - [ ] 1.2 Добавить зависимости в pyproject.toml
+  - [x] 1.2 Добавить зависимости в pyproject.toml
     - Добавить в основные зависимости: aiogram, python-dotenv, langchain-openai, langchain-ollama
     - _Requirements: 6.1, 6.2_
 
-  - [ ] 1.3 Создать структуру каталога classes_bot/
+  - [x] 1.3 Создать структуру каталога classes_bot/
     - Создать `classes_bot/__init__.py`
     - Создать `classes_bot/exceptions.py` с классами BotError, VectorStoreError, LLMError
     - _Requirements: 8.1, 8.2, 8.3_
 
-- [ ] 2. Реализация инфраструктурных компонентов
-  - [ ] 2.1 Реализовать LLMFactory (classes_bot/llm_factory.py)
+- [x] 2. Реализация инфраструктурных компонентов
+  - [x] 2.1 Реализовать LLMFactory (classes_bot/llm_factory.py)
     - Класс LLMFactory со статическим методом create() -> BaseChatModel
     - При LLM_PROVIDER == "deepseek": возвращает ChatOpenAI с параметрами из config
     - При LLM_PROVIDER == "ollama": возвращает ChatOllama с параметрами из config
@@ -32,7 +32,7 @@
     - Логирование создания через logger.info с %s подстановкой
     - _Requirements: 6.1, 6.2, 6.3_
 
-  - [ ] 2.2 Реализовать Retriever (classes_bot/retriever.py)
+  - [x] 2.2 Реализовать Retriever (classes_bot/retriever.py)
     - Класс Retriever с конструктором принимающим VectorStore и top_k
     - Метод async search(query: str) -> list[Document]
     - Вызывает vector_store.asimilarity_search(query, k=self._top_k)
@@ -40,8 +40,8 @@
     - Логирование количества найденных чанков через logger.info
     - _Requirements: 2.1, 2.4, 8.1_
 
-- [ ] 3. Реализация RAG-цепочки
-  - [ ] 3.1 Реализовать RAGChain (classes_bot/rag_chain.py)
+- [x] 3. Реализация RAG-цепочки
+  - [x] 3.1 Реализовать RAGChain (classes_bot/rag_chain.py)
     - Dataclass RAGResult с полями: answer (str), sources (list[str]), image_paths (list[str])
     - Класс RAGChain с конструктором принимающим Retriever и BaseChatModel
     - Метод async process(question: str) -> RAGResult
@@ -66,11 +66,11 @@
     - **Property 3: Image paths extraction completeness**
     - **Validates: Requirements 5.1**
 
-- [ ] 4. Checkpoint - Проверка core-логики
+- [x] 4. Checkpoint - Проверка core-логики
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Реализация Telegram-интерфейса
-  - [ ] 5.1 Реализовать MessageHandler (classes_bot/handlers.py)
+- [x] 5. Реализация Telegram-интерфейса
+  - [x] 5.1 Реализовать MessageHandler (classes_bot/handlers.py)
     - Класс MessageHandler с конструктором принимающим RAGChain
     - Создание aiogram Router в конструкторе
     - Метод async handle_text(message: Message) — обработка текстовых сообщений
@@ -84,7 +84,7 @@
     - Логирование ошибок на ERROR с контекстом
     - _Requirements: 1.1, 1.3, 4.1, 4.2, 4.3, 5.1, 5.2, 5.3, 5.4, 8.1, 8.2, 8.3, 9.1, 9.2, 9.3, 9.4_
 
-  - [ ] 5.2 Реализовать TelegramBot (classes_bot/bot.py)
+  - [x] 5.2 Реализовать TelegramBot (classes_bot/bot.py)
     - Класс TelegramBot с конструктором принимающим token и RAGChain
     - Создание aiogram Bot и Dispatcher
     - Подключение роутера из MessageHandler к Dispatcher
@@ -97,8 +97,8 @@
     - **Property 4: Sequential per-user message processing**
     - **Validates: Requirements 1.2**
 
-- [ ] 6. Интеграция и точка входа
-  - [ ] 6.1 Добавить флаг --bot в main.py
+- [x] 6. Интеграция и точка входа
+  - [x] 6.1 Добавить флаг --bot в main.py
     - Добавить аргумент --bot в argparse (action="store_true")
     - Реализовать функцию run_bot(): создание embeddings, vector_store, Retriever, LLMFactory.create(), RAGChain, TelegramBot и запуск
     - Обработка SIGINT/SIGTERM для graceful shutdown
@@ -106,11 +106,11 @@
     - Валидация DEEPSEEK_API_KEY при LLM_PROVIDER == "deepseek"
     - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
-  - [ ] 6.2 Обновить classes_bot/__init__.py с экспортом основных классов
+  - [x] 6.2 Обновить classes_bot/__init__.py с экспортом основных классов
     - Экспортировать TelegramBot, RAGChain, Retriever, LLMFactory, MessageHandler
     - _Requirements: 7.1_
 
-- [ ] 7. Final checkpoint - Полная проверка
+- [x] 7. Final checkpoint - Полная проверка
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

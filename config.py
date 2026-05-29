@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from pathlib import Path
 import os
 
@@ -35,3 +38,18 @@ QDRANT_COLLECTION_NAME = "documents"
 
 # Batch settings
 UPSERT_BATCH_SIZE = 64
+
+# --- Telegram Bot ---
+TELEGRAM_BOT_TOKEN: str = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+
+# --- LLM ---
+LLM_PROVIDER: str = "deepseek"  # "deepseek" | "ollama"
+DEEPSEEK_API_KEY: str = os.environ.get("DEEPSEEK_API_KEY", "")
+DEEPSEEK_MODEL: str = "deepseek-v4-flash"
+DEEPSEEK_BASE_URL: str = "https://api.deepseek.com/v1"
+
+OLLAMA_BASE_URL: str = "http://localhost:11434"
+OLLAMA_MODEL: str = "qwen2.5:7b"
+
+# --- RAG ---
+RAG_TOP_K: int = 5

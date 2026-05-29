@@ -11,6 +11,10 @@ dependencies = [
     "ftfy",
     "sentence-transformers",
     "protobuf>=3.20,<4.0",
+    "aiogram",
+    "python-dotenv",
+    "langchain-openai",
+    "langchain-ollama",
 ]
 
 [project.optional-dependencies]
