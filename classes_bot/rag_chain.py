@@ -7,15 +7,9 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 from classes_bot.retriever import Retriever
 from classes_bot.exceptions import LLMError
+from config import RAG_SYSTEM_PROMPT, RAG_USER_PROMPT
 
 logger = logging.getLogger(__name__)
-
-SYSTEM_PROMPT = (
-    "Ты — ассистент, отвечающий на вопросы по научным статьям. "
-    "Отвечай ТОЛЬКО на основе предоставленного контекста. "
-    "Если информации недостаточно, скажи об этом. "
-    "Отвечай на том же языке, на котором задан вопрос."
-)
 
 
 @dataclass
@@ -47,8 +41,8 @@ class RAGChain:
         logger.info("Built context from %s chunks", len(chunks))
 
         messages = [
-            SystemMessage(content=SYSTEM_PROMPT),
-            HumanMessage(content=f"Контекст:\n{context}\n\nВопрос: {question}"),
+            SystemMessage(content=RAG_SYSTEM_PROMPT),
+            HumanMessage(content=RAG_USER_PROMPT.format(context=context, question=question)),
         ]
 
         try:

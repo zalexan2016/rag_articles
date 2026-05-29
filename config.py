@@ -1,8 +1,10 @@
+import os
+from pathlib import Path
+
 from dotenv import load_dotenv
+
 load_dotenv()
 
-from pathlib import Path
-import os
 
 PDF_SOURCE_DIR = Path("source/pdf")
 SOURCE_MD_DIR = Path("source/md")
@@ -43,13 +45,16 @@ UPSERT_BATCH_SIZE = 64
 TELEGRAM_BOT_TOKEN: str = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 
 # --- LLM ---
-LLM_PROVIDER: str = "deepseek"  # "deepseek" | "ollama"
-DEEPSEEK_API_KEY: str = os.environ.get("DEEPSEEK_API_KEY", "")
-DEEPSEEK_MODEL: str = "deepseek-v4-flash"
-DEEPSEEK_BASE_URL: str = "https://api.deepseek.com/v1"
-
-OLLAMA_BASE_URL: str = "http://localhost:11434"
-OLLAMA_MODEL: str = "qwen2.5:7b"
+LLM_API_KEY: str = os.environ.get("LLM_API_KEY", "")
+LLM_MODEL: str = "deepseek-v4-flash"
+LLM_BASE_URL: str = "https://api.deepseek.com/v1"
 
 # --- RAG ---
 RAG_TOP_K: int = 5
+RAG_SYSTEM_PROMPT: str = (
+    "Ты — ассистент, отвечающий на вопросы по научным статьям. "
+    "Отвечай ТОЛЬКО на основе предоставленного контекста. "
+    "Если информации недостаточно, скажи об этом. "
+    "Отвечай на том же языке, на котором задан вопрос."
+)
+RAG_USER_PROMPT: str = "Контекст:\n{context}\n\nВопрос: {question}"

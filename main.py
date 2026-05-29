@@ -4,14 +4,18 @@ import logging
 import signal
 import sys
 
-import config  # noqa: F401 — sets HF_HUB_OFFLINE before other imports
+import config  # noqa: F401 — loads .env and sets HF_HUB_OFFLINE
 
 from langchain_huggingface import HuggingFaceEmbeddings
 
+from classes_bot.bot import TelegramBot
+from classes_bot.retriever import Retriever
+from classes_bot.llm_factory import LLMFactory
+from classes_bot.rag_chain import RAGChain
 from classes_processing.pdf_converter import PdfConverter
 from classes_processing.pipeline import Pipeline
 from common.vector_store_factory import create_vector_store
-from config import EMBEDDING_MODEL_NAME
+from config import EMBEDDING_MODEL_NAME, TELEGRAM_BOT_TOKEN
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -46,20 +50,15 @@ def run_search(query: str) -> None:
 
 
 async def run_bot() -> None:
-    from classes_bot.bot import TelegramBot
-    from classes_bot.retriever import Retriever
-    from classes_bot.llm_factory import LLMFactory
-    from classes_bot.rag_chain import RAGChain
-    from config import TELEGRAM_BOT_TOKEN, LLM_PROVIDER, DEEPSEEK_API_KEY
-
-    if LLM_PROVIDER == "deepseek" and not DEEPSEEK_API_KEY:
-        logger.error("DEEPSEEK_API_KEY is not set but LLM_PROVIDER is 'deepseek'")
+    try:
+        llm = LLMFactory.create()
+    except Exception as e:
+        logger.error("Failed to create LLM client: %s", e)
         sys.exit(1)
 
     embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
     vector_store = create_vector_store(embeddings)
     retriever = Retriever(vector_store)
-    llm = LLMFactory.create()
     rag_chain = RAGChain(retriever, llm)
     bot = TelegramBot(TELEGRAM_BOT_TOKEN, rag_chain)
 
