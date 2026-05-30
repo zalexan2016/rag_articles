@@ -1,5 +1,5 @@
-import json
 import logging
+import re
 from dataclasses import dataclass
 
 from langchain_core.language_models import BaseChatModel
@@ -10,6 +10,9 @@ from classes_bot.exceptions import LLMError
 from config import RAG_SYSTEM_PROMPT, RAG_USER_PROMPT
 
 logger = logging.getLogger(__name__)
+
+_IMAGE_IN_ANSWER = re.compile(r'\[image:\s*([^\]]+)\]')
+_SOURCE_IN_ANSWER = re.compile(r'\[source:\s*([^\]]+)\]')
 
 
 @dataclass
@@ -37,7 +40,12 @@ class RAGChain:
                 image_paths=[],
             )
 
-        context = "\n\n".join(chunk.page_content for chunk in chunks)
+        context_parts = []
+        for chunk in chunks:
+            source = chunk.metadata.get("source", "")
+            part = f"[source: {source}]\n{chunk.page_content}" if source else chunk.page_content
+            context_parts.append(part)
+        context = "\n\n".join(context_parts)
         logger.info("Built context from %s chunks", len(chunks))
 
         messages = [
@@ -53,18 +61,19 @@ class RAGChain:
 
         logger.info("Generated answer of %s chars", len(answer))
 
-        sources = list(dict.fromkeys(
-            chunk.metadata.get("source", "") for chunk in chunks if chunk.metadata.get("source")
-        ))
+        # Если LLM пометила ответ как не требующий источников
+        if answer.startswith("[NO_SOURCES]"):
+            answer = answer.replace("[NO_SOURCES]", "").strip()
+            return RAGResult(answer=answer, sources=[], image_paths=[])
 
-        image_paths = []
-        for chunk in chunks:
-            raw = chunk.metadata.get("image_paths", "[]")
-            try:
-                paths = json.loads(raw) if isinstance(raw, str) else raw
-                image_paths.extend(paths)
-            except (json.JSONDecodeError, TypeError):
-                pass
+        sources = list(dict.fromkeys(_SOURCE_IN_ANSWER.findall(answer)))
+
+        # Извлекаем только те картинки, которые LLM упомянула в ответе
+        image_paths = _IMAGE_IN_ANSWER.findall(answer)
+        logger.info("Sources: %s, Images: %s", sources, image_paths)
+        # Убираем теги [source: ...] и [image: ...] из текста ответа
+        answer = _SOURCE_IN_ANSWER.sub("", answer)
+        answer = _IMAGE_IN_ANSWER.sub("", answer).strip()
 
         logger.info("Extracted %s sources and %s image paths", len(sources), len(image_paths))
 

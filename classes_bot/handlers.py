@@ -7,6 +7,7 @@ from aiogram.types import Message, FSInputFile
 
 from classes_bot.rag_chain import RAGChain, RAGResult
 from classes_bot.exceptions import VectorStoreError, LLMError
+from config import SOURCE_MD_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -49,8 +50,8 @@ class MessageHandler:
         await message.answer(text)
 
         for img_path in result.image_paths:
-            path = Path(img_path)
+            path = SOURCE_MD_DIR / img_path
             if path.exists():
                 await message.answer_photo(FSInputFile(path))
             else:
-                logger.warning("Image file not found: %s", img_path)
+                logger.warning("Image file not found: %s", path)

@@ -90,8 +90,6 @@ class Pipeline:
                 stats.errors.append(f"Chunking error: {filename}: {e}")
                 continue
 
-            logger.info("Created %s chunks for '%s'.", len(chunks), filename)
-
             try:
                 for i in range(0, len(chunks), UPSERT_BATCH_SIZE):
                     batch = chunks[i:i + UPSERT_BATCH_SIZE]

@@ -14,6 +14,8 @@ class PostProcessor:
     _MULTIPLE_SPACES = re.compile(r' {2,}')
     _MULTIPLE_BLANK_LINES = re.compile(r'\n{3,}')
     _NON_PRINTABLE = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]')
+    _PUA_CHARS = re.compile(r'[\ue000-\uf8ff]')
+    _GLYPH_CODES = re.compile(r'/g\d+')
     _IMAGE_TAG = re.compile(r'!\[Image\]\(([^)]+)\)')
 
     def process(self, text: str) -> str:
@@ -22,6 +24,8 @@ class PostProcessor:
         text = ftfy.fix_text(text)
 
         text = self._NON_PRINTABLE.sub('', text)
+        text = self._PUA_CHARS.sub('', text)
+        text = self._GLYPH_CODES.sub('', text)
 
         text = self._IMAGE_TAG.sub(r'[image: \1]', text)
 
