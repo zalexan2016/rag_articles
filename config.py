@@ -15,7 +15,7 @@ MD_EXTENSION = ".md"
 # Минимальное кол-во символов текста на страницу чтобы считать PDF текстовым
 MIN_TEXT_CHARS_PER_PAGE = 50
 
-# Использовать локальный кэш моделей HuggingFace без обращения к серверу
+# 1 — use local HuggingFace cache (offline), 0 — allow downloading
 os.environ["HF_HUB_OFFLINE"] = "1"
 
 # --- Text Processing Pipeline ---

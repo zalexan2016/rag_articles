@@ -44,3 +44,70 @@ torchvision = [
     { index = "pytorch-cpu", extra = "cpu" },
     { index = "pytorch-cu124", extra = "gpu" },
 ]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+indent-width = 4
+exclude = [
+    ".venv",
+    "source",
+    ".cache",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "EXE",
+    "F",
+    "W",
+    "C",
+    "N",
+    "A",
+    "B",
+    "BLE",
+    "COM",
+    "C4",
+    "Q",
+    "PIE",
+    "PYI",
+    "YTT",
+    "ARG",
+    "T10",
+    "T20",
+    "PTH",
+    "G",
+    "EM",
+    "ISC",
+    "RUF",
+    "UP",
+    "PL",
+    "PLE",
+    "PLR",
+    "PLW",
+    "I",
+]
+ignore = [
+    "A005",
+    "BLE001",
+    "PLC0415",
+    "PLW2901",
+    "RUF001",
+    "RUF012",
+    "RUF022",
+    "UP006",
+    "UP017",
+    "T20",
+]
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "double"
+multiline-quotes = "double"
+
+[tool.ruff.lint.pylint]
+max-args = 6

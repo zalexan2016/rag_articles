@@ -24,12 +24,12 @@ class BaseConverter(ABC):
         self._source_extension = source_extension
 
     @abstractmethod
-    def run(self) -> ConversionStats:
-        ...
+    def run(self) -> ConversionStats: ...
 
     def _discover_files(self) -> list[Path]:
         if not self._source_dir.exists():
-            raise FileNotFoundError("Source directory '%s' does not exist." % self._source_dir)
+            msg = f"Source directory '{self._source_dir}' does not exist."
+            raise FileNotFoundError(msg)
         return sorted(p for p in self._source_dir.iterdir() if p.suffix == self._source_extension)
 
     def _filter_unconverted(self, source_files: list[Path]) -> tuple[list[Path], list[Path]]:

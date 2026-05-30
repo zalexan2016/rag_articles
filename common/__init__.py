@@ -1,1 +1,2 @@
-from common.vector_store_factory import create_vector_store
+from common.embeddings_factory import create_embeddings as create_embeddings
+from common.vector_store_factory import create_vector_store as create_vector_store

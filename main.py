@@ -6,16 +6,17 @@ import sys
 
 import config  # noqa: F401 — loads .env and sets HF_HUB_OFFLINE
 
-from langchain_huggingface import HuggingFaceEmbeddings
+# isort: split
 
 from classes_bot.bot import TelegramBot
-from classes_bot.retriever import Retriever
 from classes_bot.llm_factory import LLMFactory
 from classes_bot.rag_chain import RAGChain
+from classes_bot.retriever import Retriever
 from classes_processing.pdf_converter import PdfConverter
 from classes_processing.pipeline import Pipeline
+from common.embeddings_factory import create_embeddings
 from common.vector_store_factory import create_vector_store
-from config import EMBEDDING_MODEL_NAME, TELEGRAM_BOT_TOKEN
+from config import TELEGRAM_BOT_TOKEN
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -27,14 +28,14 @@ def run_convert() -> None:
 
 
 def run_pipeline() -> None:
-    embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
+    embeddings = create_embeddings()
     vector_store = create_vector_store(embeddings)
     pipeline = Pipeline(vector_store)
     pipeline.run()
 
 
 def run_search(query: str) -> None:
-    embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
+    embeddings = create_embeddings()
     vector_store = create_vector_store(embeddings)
 
     hits = vector_store.similarity_search(query, k=5)
@@ -42,7 +43,7 @@ def run_search(query: str) -> None:
     print(f"\n=== Search: '{query}' ===\n")
 
     for i, hit in enumerate(hits):
-        print(f"[{i+1}]")
+        print(f"[{i + 1}]")
         print(f"  text:        {hit.page_content}")
         print(f"  source:      {hit.metadata.get('source')}")
         print(f"  image_paths: {hit.metadata.get('image_paths')}")
@@ -56,7 +57,7 @@ async def run_bot() -> None:
         logger.error("Failed to create LLM client: %s", e)
         sys.exit(1)
 
-    embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
+    embeddings = create_embeddings()
     vector_store = create_vector_store(embeddings)
     retriever = Retriever(vector_store)
     rag_chain = RAGChain(retriever, llm)

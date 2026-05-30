@@ -5,14 +5,14 @@ from dataclasses import dataclass
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage, SystemMessage
 
-from classes_bot.retriever import Retriever
 from classes_bot.exceptions import LLMError
+from classes_bot.retriever import Retriever
 from config import RAG_SYSTEM_PROMPT, RAG_USER_PROMPT
 
 logger = logging.getLogger(__name__)
 
-_IMAGE_IN_ANSWER = re.compile(r'\[image:\s*([^\]]+)\]')
-_SOURCE_IN_ANSWER = re.compile(r'\[source:\s*([^\]]+)\]')
+_IMAGE_IN_ANSWER = re.compile(r"\[image:\s*([^\]]+)\]")
+_SOURCE_IN_ANSWER = re.compile(r"\[source:\s*([^\]]+)\]")
 
 
 @dataclass
@@ -57,7 +57,8 @@ class RAGChain:
             response = await self._llm.ainvoke(messages)
             answer = response.content
         except Exception as e:
-            raise LLMError("LLM generation failed: %s" % e) from e
+            msg = f"LLM generation failed: {e}"
+            raise LLMError(msg) from e
 
         logger.info("Generated answer of %s chars", len(answer))
 

@@ -13,7 +13,7 @@ from config import EMBEDDING_MODEL_NAME, MAX_CHUNK_TOKENS, PDF_EXTENSION, PDF_SO
 
 logger = logging.getLogger(__name__)
 
-IMAGE_PATTERN = re.compile(r'\[image: ([^\]]+)\]')
+IMAGE_PATTERN = re.compile(r"\[image: ([^\]]+)\]")
 
 
 class Chunker:

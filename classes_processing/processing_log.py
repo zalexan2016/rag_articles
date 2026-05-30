@@ -11,7 +11,7 @@ class ProcessingLog:
         self._log_path = log_path
         self._data: dict[str, str] = {}
         if self._log_path.exists():
-            with open(self._log_path, "r", encoding="utf-8") as f:
+            with self._log_path.open(encoding="utf-8") as f:
                 self._data = json.load(f)
             logger.info("Loaded processing log from '%s' with %s entries", self._log_path, len(self._data))
         else:
@@ -26,7 +26,7 @@ class ProcessingLog:
 
     def update(self, filename: str, content_hash: str) -> None:
         self._data[filename] = content_hash
-        with open(self._log_path, "w", encoding="utf-8") as f:
+        with self._log_path.open("w", encoding="utf-8") as f:
             json.dump(self._data, f, ensure_ascii=False, indent=2)
         logger.info("Updated processing log: '%s' -> %s", filename, content_hash)
 

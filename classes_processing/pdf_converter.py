@@ -8,13 +8,18 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling_core.types.doc.base import ImageRefMode
 
 from classes_processing.base_converter import BaseConverter, ConversionStats
-from config import PDF_SOURCE_DIR, SOURCE_MD_DIR, IMAGES_MD_DIR, PDF_EXTENSION, MD_EXTENSION, MIN_TEXT_CHARS_PER_PAGE
+from config import IMAGES_MD_DIR, MD_EXTENSION, MIN_TEXT_CHARS_PER_PAGE, PDF_EXTENSION, PDF_SOURCE_DIR, SOURCE_MD_DIR
 
 logger = logging.getLogger(__name__)
 
 
 class PdfConverter(BaseConverter):
-    def __init__(self, source_dir: Path = PDF_SOURCE_DIR, output_dir: Path = SOURCE_MD_DIR, images_dir: Path = IMAGES_MD_DIR):
+    def __init__(
+        self,
+        source_dir: Path = PDF_SOURCE_DIR,
+        output_dir: Path = SOURCE_MD_DIR,
+        images_dir: Path = IMAGES_MD_DIR,
+    ):
         super().__init__(source_dir, output_dir, PDF_EXTENSION)
         self._images_dir = images_dir
 
@@ -55,7 +60,11 @@ class PdfConverter(BaseConverter):
                 self._convert_and_save(pdf_path, output_path, converter)
                 stats.converted += 1
             except Exception as e:
-                logger.warning("Enriched conversion failed for '%s': %s. Retrying without enrichments...", pdf_path.name, e)
+                logger.warning(
+                    "Enriched conversion failed for '%s': %s. Retrying without enrichments...",
+                    pdf_path.name,
+                    e,
+                )
                 try:
                     fallback = self._make_converter(ocr=needs_ocr, enrichments=False)
                     output_path = self._output_dir / (pdf_path.stem + MD_EXTENSION)
@@ -63,7 +72,7 @@ class PdfConverter(BaseConverter):
                     stats.converted += 1
                 except Exception as e2:
                     stats.failed += 1
-                    stats.errors.append("Failed to convert '%s': %s" % (pdf_path.name, e2))
+                    stats.errors.append(f"Failed to convert '{pdf_path.name}': {e2}")
                     logger.error("Failed to convert '%s': %s", pdf_path.name, e2)
 
         self._log_summary(stats)
@@ -93,9 +102,9 @@ class PdfConverter(BaseConverter):
                         do_formula_enrichment=enrichments,
                         do_picture_classification=enrichments,
                         do_picture_description=False,
-                    )
-                )
-            }
+                    ),
+                ),
+            },
         )
 
     def _convert_and_save(self, pdf_path: Path, output_path: Path, converter: DocumentConverter) -> None:

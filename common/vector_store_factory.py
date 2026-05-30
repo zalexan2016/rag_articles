@@ -34,4 +34,5 @@ def create_vector_store(embeddings: HuggingFaceEmbeddings) -> VectorStore:
             embedding=embeddings,
         )
     else:
-        raise ValueError("Unknown vector store type: %s" % VECTOR_STORE_TYPE)
+        msg = f"Unknown vector store type: {VECTOR_STORE_TYPE}"
+        raise ValueError(msg)

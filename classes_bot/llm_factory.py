@@ -1,10 +1,10 @@
 import logging
 
 from langchain_core.language_models import BaseChatModel
-from langchain_openai import ChatOpenAI
 from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 
-from config import LLM_API_KEY, LLM_MODEL, LLM_BASE_URL
+from config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL
 
 logger = logging.getLogger(__name__)
 

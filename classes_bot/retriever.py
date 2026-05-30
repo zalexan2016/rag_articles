@@ -20,4 +20,5 @@ class Retriever:
             logger.info("Found %s chunks for query", len(results))
             return results
         except Exception as e:
-            raise VectorStoreError("Vector store search failed: %s" % e) from e
+            msg = f"Vector store search failed: {e}"
+            raise VectorStoreError(msg) from e

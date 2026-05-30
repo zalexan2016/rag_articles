@@ -3,10 +3,10 @@ from pathlib import Path
 
 from aiogram import F, Router
 from aiogram.enums import ChatAction
-from aiogram.types import Message, FSInputFile
+from aiogram.types import FSInputFile, Message
 
+from classes_bot.exceptions import LLMError, VectorStoreError
 from classes_bot.rag_chain import RAGChain, RAGResult
-from classes_bot.exceptions import VectorStoreError, LLMError
 from config import SOURCE_MD_DIR
 
 logger = logging.getLogger(__name__)

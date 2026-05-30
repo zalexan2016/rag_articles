@@ -1,6 +1,9 @@
-from classes_bot.bot import TelegramBot
-from classes_bot.rag_chain import RAGChain, RAGResult
-from classes_bot.retriever import Retriever
-from classes_bot.llm_factory import LLMFactory
-from classes_bot.handlers import MessageHandler
-from classes_bot.exceptions import BotError, VectorStoreError, LLMError
+from classes_bot.bot import TelegramBot as TelegramBot
+from classes_bot.exceptions import BotError as BotError
+from classes_bot.exceptions import LLMError as LLMError
+from classes_bot.exceptions import VectorStoreError as VectorStoreError
+from classes_bot.handlers import MessageHandler as MessageHandler
+from classes_bot.llm_factory import LLMFactory as LLMFactory
+from classes_bot.rag_chain import RAGChain as RAGChain
+from classes_bot.rag_chain import RAGResult as RAGResult
+from classes_bot.retriever import Retriever as Retriever

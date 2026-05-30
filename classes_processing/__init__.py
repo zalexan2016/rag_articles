@@ -1,6 +1,8 @@
-from classes_processing.base_converter import BaseConverter, ConversionStats
-from classes_processing.pdf_converter import PdfConverter
-from classes_processing.pipeline import Pipeline, PipelineStats
-from classes_processing.chunker import Chunker
-from classes_processing.post_processor import PostProcessor
-from classes_processing.processing_log import ProcessingLog
+from classes_processing.base_converter import BaseConverter as BaseConverter
+from classes_processing.base_converter import ConversionStats as ConversionStats
+from classes_processing.chunker import Chunker as Chunker
+from classes_processing.pdf_converter import PdfConverter as PdfConverter
+from classes_processing.pipeline import Pipeline as Pipeline
+from classes_processing.pipeline import PipelineStats as PipelineStats
+from classes_processing.post_processor import PostProcessor as PostProcessor
+from classes_processing.processing_log import ProcessingLog as ProcessingLog
