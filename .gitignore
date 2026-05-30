@@ -18,6 +18,7 @@ uv.lock
 # Pipeline runtime data
 processing_log.json
 chroma_db/
+bot.log
 
 # Source data (PDFs and converted files)
 source/pdf/*
