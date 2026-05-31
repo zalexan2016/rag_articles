@@ -47,6 +47,9 @@ class MessageHandler:
                 filename = Path(source).name
                 text += f"\n{i}. {filename}"
 
+        if not text.strip():
+            text = "Не удалось сформировать ответ."
+
         await message.answer(text)
 
         for img_path in result.image_paths:

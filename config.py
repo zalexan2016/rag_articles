@@ -1,3 +1,4 @@
+import logging
 import os
 from pathlib import Path
 
@@ -14,6 +15,11 @@ MD_EXTENSION = ".md"
 
 # Минимальное кол-во символов текста на страницу чтобы считать PDF текстовым
 MIN_TEXT_CHARS_PER_PAGE = 50
+
+# Logging
+LOG_LEVEL = logging.INFO
+LOG_FORMAT = "%(asctime)s %(levelname)s: %(message)s"
+LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 # 1 — use local HuggingFace cache (offline), 0 — allow downloading
 os.environ["HF_HUB_OFFLINE"] = "1"
@@ -51,6 +57,7 @@ LLM_BASE_URL: str = "https://api.openai.com/v1"
 
 # --- RAG ---
 RAG_TOP_K: int = 5
+RAG_FETCH_K: int = 20
 RAG_SYSTEM_PROMPT: str = (
     "Ты — ассистент, отвечающий на вопросы по научным статьям. "
     "Отвечай ТОЛЬКО на основе предоставленного контекста. "

@@ -16,9 +16,9 @@ from classes_processing.pdf_converter import PdfConverter
 from classes_processing.pipeline import Pipeline
 from common.embeddings_factory import create_embeddings
 from common.vector_store_factory import create_vector_store
-from config import TELEGRAM_BOT_TOKEN
+from config import LOG_DATE_FORMAT, LOG_FORMAT, LOG_LEVEL, TELEGRAM_BOT_TOKEN
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT, datefmt=LOG_DATE_FORMAT)
 logger = logging.getLogger(__name__)
 
 

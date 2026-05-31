@@ -4,7 +4,7 @@ from langchain_core.documents import Document
 from langchain_core.vectorstores import VectorStore
 
 from classes_bot.exceptions import VectorStoreError
-from config import RAG_EXCLUDED_SECTIONS, RAG_TOP_K
+from config import RAG_EXCLUDED_SECTIONS, RAG_FETCH_K, RAG_TOP_K
 
 logger = logging.getLogger(__name__)
 
@@ -19,12 +19,13 @@ class Retriever:
             search_filter = None
             if RAG_EXCLUDED_SECTIONS:
                 search_filter = {"section": {"$nin": RAG_EXCLUDED_SECTIONS}}
-            results = await self._vector_store.asimilarity_search(
+            results = await self._vector_store.amax_marginal_relevance_search(
                 query,
                 k=self._top_k,
+                fetch_k=RAG_FETCH_K,
                 filter=search_filter,
             )
-            logger.info("Found %s chunks for query", len(results))
+            logger.info("Found %s chunks for query (MMR)", len(results))
             return results
         except Exception as e:
             msg = f"Vector store search failed: {e}"
