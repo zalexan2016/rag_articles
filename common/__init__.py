@@ -1,2 +1,3 @@
 from common.embeddings_factory import create_embeddings as create_embeddings
+from common.search_filter import build_search_filter as build_search_filter
 from common.vector_store_factory import create_vector_store as create_vector_store

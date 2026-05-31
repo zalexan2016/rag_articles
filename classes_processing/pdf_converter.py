@@ -109,7 +109,10 @@ class PdfConverter(BaseConverter):
 
     def _convert_and_save(self, pdf_path: Path, output_path: Path, converter: DocumentConverter) -> None:
         conv_res = converter.convert(source=str(pdf_path))
-        artifacts_relative = self._images_dir.relative_to(self._output_dir)
+        # Each file gets its own subfolder for images: img/{stem}/
+        file_images_dir = self._images_dir / pdf_path.stem
+        file_images_dir.mkdir(parents=True, exist_ok=True)
+        artifacts_relative = file_images_dir.relative_to(self._output_dir)
         conv_res.document.save_as_markdown(
             filename=output_path,
             artifacts_dir=artifacts_relative,

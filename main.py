@@ -15,8 +15,9 @@ from classes_bot.retriever import Retriever
 from classes_processing.pdf_converter import PdfConverter
 from classes_processing.pipeline import Pipeline
 from common.embeddings_factory import create_embeddings
+from common.search_filter import build_search_filter
 from common.vector_store_factory import create_vector_store
-from config import LOG_DATE_FORMAT, LOG_FORMAT, LOG_LEVEL, TELEGRAM_BOT_TOKEN
+from config import LOG_DATE_FORMAT, LOG_FORMAT, LOG_LEVEL, RAG_FETCH_K, RAG_TOP_K, TELEGRAM_BOT_TOKEN
 
 logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT, datefmt=LOG_DATE_FORMAT)
 logger = logging.getLogger(__name__)
@@ -38,18 +39,23 @@ def run_search(query: str) -> None:
     embeddings = create_embeddings()
     vector_store = create_vector_store(embeddings)
 
-    hits = vector_store.similarity_search(query, k=5)
+    hits = vector_store.max_marginal_relevance_search(
+        query,
+        k=RAG_TOP_K,
+        fetch_k=RAG_FETCH_K,
+        filter=build_search_filter(),
+    )
 
-    print(f"\n=== Search: '{query}' ===\n")
+    sys.stdout.write(f"\n=== Search: '{query}' ===\n\n")
 
     for i, hit in enumerate(hits):
-        print(f"[{i + 1}]")
-        print(f"  text:        {hit.page_content[:300]}")
-        print(f"  source:      {hit.metadata.get('source')}")
-        print(f"  section:     {hit.metadata.get('section')}")
-        print(f"  image_paths: {hit.metadata.get('image_paths')}")
-        print(f"  md_hash:     {hit.metadata.get('md_hash')}")
-        print()
+        sys.stdout.write(f"[{i + 1}]\n")
+        sys.stdout.write(f"  text:        {hit.page_content[:300]}\n")
+        sys.stdout.write(f"  source:      {hit.metadata.get('source')}\n")
+        sys.stdout.write(f"  section:     {hit.metadata.get('section')}\n")
+        sys.stdout.write(f"  image_paths: {hit.metadata.get('image_paths')}\n")
+        sys.stdout.write(f"  md_hash:     {hit.metadata.get('md_hash')}\n")
+        sys.stdout.write("\n")
 
 
 async def run_bot() -> None:
