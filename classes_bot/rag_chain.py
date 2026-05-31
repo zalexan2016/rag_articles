@@ -43,7 +43,11 @@ class RAGChain:
         context_parts = []
         for chunk in chunks:
             source = chunk.metadata.get("source", "")
-            part = f"[source: {source}]\n{chunk.page_content}" if source else chunk.page_content
+            section = chunk.metadata.get("section", "")
+            header = f"[source: {source}]"
+            if section:
+                header += f" [section: {section}]"
+            part = f"{header}\n{chunk.page_content}"
             context_parts.append(part)
         context = "\n\n".join(context_parts)
         logger.info("Built context from %s chunks", len(chunks))
@@ -71,6 +75,7 @@ class RAGChain:
 
         # Извлекаем только те картинки, которые LLM упомянула в ответе
         image_paths = _IMAGE_IN_ANSWER.findall(answer)
+
         logger.info("Sources: %s, Images: %s", sources, image_paths)
         # Убираем теги [source: ...] и [image: ...] из текста ответа
         answer = _SOURCE_IN_ANSWER.sub("", answer)

@@ -78,6 +78,8 @@ class Pipeline:
         return files_to_process
 
     def _process_file(self, filename: str, content: str, stats: PipelineStats) -> None:
+        content_hash = ProcessingLog.compute_hash(content)
+
         try:
             processed_text = self._post_processor.process(content)
         except OSError as e:
@@ -87,7 +89,7 @@ class Pipeline:
             return
 
         try:
-            chunks = self._chunker.chunk(processed_text, filename)
+            chunks = self._chunker.chunk(processed_text, filename, content_hash)
         except OSError as e:
             logger.error("Failed to chunk '%s': %s", filename, e)
             stats.failed += 1
@@ -104,7 +106,6 @@ class Pipeline:
             stats.errors.append(f"Vector store error: {filename}: {e}")
             return
 
-        content_hash = ProcessingLog.compute_hash(content)
         try:
             self._log.update(filename, content_hash)
         except OSError as e:

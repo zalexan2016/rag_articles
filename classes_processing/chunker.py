@@ -24,7 +24,7 @@ class Chunker:
         )
         self._converter = DocumentConverter(allowed_formats=[InputFormat.MD])
 
-    def chunk(self, text: str, md_filename: str) -> list[Document]:
+    def chunk(self, text: str, md_filename: str, md_hash: str = "") -> list[Document]:
         source_pdf = str(PDF_SOURCE_DIR / md_filename.replace(".md", PDF_EXTENSION))
 
         dl_doc = self._text_to_docling_document(text, md_filename)
@@ -38,6 +38,8 @@ class Chunker:
                 metadata={
                     "source": source_pdf,
                     "image_paths": json.dumps(image_paths),
+                    "section": self._extract_heading(chunk),
+                    "md_hash": md_hash,
                 },
             )
             documents.append(doc)
@@ -55,3 +57,9 @@ class Chunker:
 
     def _extract_image_paths(self, text: str) -> list[str]:
         return IMAGE_PATTERN.findall(text)
+
+    def _extract_heading(self, chunk) -> str:
+        headings = chunk.meta.headings
+        if not headings:
+            return ""
+        return headings[-1].replace("\xa0", " ").strip()

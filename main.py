@@ -44,9 +44,11 @@ def run_search(query: str) -> None:
 
     for i, hit in enumerate(hits):
         print(f"[{i + 1}]")
-        print(f"  text:        {hit.page_content}")
+        print(f"  text:        {hit.page_content[:300]}")
         print(f"  source:      {hit.metadata.get('source')}")
+        print(f"  section:     {hit.metadata.get('section')}")
         print(f"  image_paths: {hit.metadata.get('image_paths')}")
+        print(f"  md_hash:     {hit.metadata.get('md_hash')}")
         print()
 
 
