@@ -11,6 +11,8 @@ config.py                        # Все настройки
 .env.example                     # Пример переменных окружения
 common/
   vector_store_factory.py        # Factory для Chroma/Qdrant
+  embeddings_factory.py          # Factory для HuggingFace Embeddings
+  search_filter.py               # Общий фильтр исключённых секций
 classes_processing/
   base_converter.py              # ABC для конвертеров
   pdf_converter.py               # PDF → Markdown (Docling)
@@ -22,13 +24,13 @@ classes_bot/
   bot.py                         # TelegramBot (aiogram 3.x, polling)
   handlers.py                    # Роутер сообщений
   rag_chain.py                   # RAG-оркестратор (retrieval + LLM)
-  retriever.py                   # Async обёртка над VectorStore
+  retriever.py                   # MMR + Cross-encoder reranking
   llm_factory.py                 # Фабрика LLM (DeepSeek/Ollama/OpenAI)
   exceptions.py                  # Кастомные исключения
 source/
   pdf/                           # Исходные PDF
   md/                            # Результаты конвертации
-    img/                         # Извлечённые изображения
+    img/{filename}/              # Извлечённые изображения (подпапка на каждый PDF)
 ```
 
 ## Установка
@@ -156,7 +158,18 @@ LLM_BASE_URL = "https://api.openai.com/v1"
 | `MAX_CHUNK_TOKENS` | `512` | Макс. размер чанка |
 | `VECTOR_STORE_TYPE` | `chroma` / `qdrant` | Тип векторной БД |
 | `UPSERT_BATCH_SIZE` | `64` | Размер батча для записи |
-| `RAG_TOP_K` | `5` | Количество чанков для retrieval |
+| `RAG_TOP_K` | `5` | Финальное количество чанков для LLM |
+| `RAG_MMR_K` | `10` | Кандидаты после MMR (разнообразие) |
+| `RAG_FETCH_K` | `20` | Начальная выборка для MMR |
+| `RERANKER_MODEL` | `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` | Модель переранжирования |
+
+## Retrieval-пайплайн
+
+```
+Запрос → Vector Store (fetch_k=20) → MMR (k=10, разнообразие) → Cross-encoder reranking (top_k=5) → LLM
+```
+
+Исключаются секции: Литература, References, Библиографическое описание, Информация об авторах.
 
 ## Метаданные чанков
 
@@ -164,3 +177,5 @@ LLM_BASE_URL = "https://api.openai.com/v1"
 |------|----------|
 | `source` | Путь к оригинальному PDF |
 | `image_paths` | JSON-массив путей к изображениям в чанке |
+| `section` | Заголовок секции документа |
+| `md_hash` | MD5-хеш исходного MD-файла (для удаления при изменении) |
