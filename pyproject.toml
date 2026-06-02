@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Скрипт конвертации PDF-файлов в Markdown с использованием langchain-docling"
 requires-python = ">=3.12"
 dependencies = [
-    "langchain-docling",
+    "docling",
     "langchain-huggingface",
     "langchain-chroma",
     "langchain-qdrant",
@@ -15,6 +15,7 @@ dependencies = [
     "python-dotenv",
     "langchain-openai",
     "langchain-ollama",
+    "pypdfium2",
 ]
 
 [project.optional-dependencies]

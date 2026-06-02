@@ -19,9 +19,11 @@ class PdfConverter(BaseConverter):
         source_dir: Path = PDF_SOURCE_DIR,
         output_dir: Path = SOURCE_MD_DIR,
         images_dir: Path = IMAGES_MD_DIR,
+        gpu: bool = False,
     ):
         super().__init__(source_dir, output_dir, PDF_EXTENSION)
         self._images_dir = images_dir
+        self._gpu = gpu
 
     def run(self) -> ConversionStats:
         stats = ConversionStats()
@@ -54,29 +56,36 @@ class PdfConverter(BaseConverter):
             needs_ocr = self._is_scanned_pdf(pdf_path)
             if needs_ocr:
                 logger.info("  Detected as scanned PDF — OCR enabled.")
-            try:
-                converter = self._make_converter(ocr=needs_ocr, enrichments=True)
-                output_path = self._output_dir / (pdf_path.stem + MD_EXTENSION)
-                self._convert_and_save(pdf_path, output_path, converter)
+            if self._gpu:
+                if self._convert_one(pdf_path, needs_ocr, enrichments=True, errors=stats.errors):
+                    stats.converted += 1
+                else:
+                    stats.failed += 1
+            elif self._convert_one(pdf_path, needs_ocr, enrichments=False, errors=stats.errors):
                 stats.converted += 1
-            except Exception as e:
+            else:
+                stats.failed += 1
+
+        self._log_summary(stats)
+        return stats
+
+    def _convert_one(self, pdf_path: Path, needs_ocr: bool, enrichments: bool, errors: list[str]) -> bool:
+        output_path = self._output_dir / (pdf_path.stem + MD_EXTENSION)
+        try:
+            converter = self._make_converter(ocr=needs_ocr, enrichments=enrichments)
+            self._convert_and_save(pdf_path, output_path, converter)
+            return True
+        except Exception as e:
+            if enrichments:
                 logger.warning(
                     "Enriched conversion failed for '%s': %s. Retrying without enrichments...",
                     pdf_path.name,
                     e,
                 )
-                try:
-                    fallback = self._make_converter(ocr=needs_ocr, enrichments=False)
-                    output_path = self._output_dir / (pdf_path.stem + MD_EXTENSION)
-                    self._convert_and_save(pdf_path, output_path, fallback)
-                    stats.converted += 1
-                except Exception as e2:
-                    stats.failed += 1
-                    stats.errors.append(f"Failed to convert '{pdf_path.name}': {e2}")
-                    logger.error("Failed to convert '%s': %s", pdf_path.name, e2)
-
-        self._log_summary(stats)
-        return stats
+                return self._convert_one(pdf_path, needs_ocr, enrichments=False, errors=errors)
+            errors.append(f"Failed to convert '{pdf_path.name}': {e}")
+            logger.error("Failed to convert '%s': %s", pdf_path.name, e)
+            return False
 
     def _is_scanned_pdf(self, pdf_path: Path) -> bool:
         doc = pdfium.PdfDocument(str(pdf_path))

@@ -80,6 +80,14 @@ uv run python main.py --convert-pdf
 
 Сканирует `source/pdf/`, конвертирует новые PDF в Markdown через Docling. Уже сконвертированные файлы пропускаются.
 
+По умолчанию работает в CPU-режиме (без обогащений). Флаг `--gpu` включает распознавание формул и классификацию изображений (требует GPU):
+
+```bash
+uv run python main.py --convert-pdf --gpu
+```
+
+> `--gpu` можно использовать только вместе с `--convert-pdf`.
+
 ### Запуск пайплайна обработки
 
 ```bash
@@ -162,6 +170,8 @@ LLM_BASE_URL = "https://api.openai.com/v1"
 | `RAG_MMR_K` | `10` | Кандидаты после MMR (разнообразие) |
 | `RAG_FETCH_K` | `20` | Начальная выборка для MMR |
 | `RERANKER_MODEL` | `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` | Модель переранжирования |
+| `ACCESS_USERNAMES` | `frozenset()` | Разрешённые Telegram-username (без @). Пусто = доступ для всех |
+| `RAG_SHOW_SOURCES` | `True` | Показывать источники в ответе бота |
 
 ## Retrieval-пайплайн
 

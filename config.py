@@ -28,7 +28,7 @@ os.environ["HF_HUB_OFFLINE"] = "1"
 PROCESSING_LOG_PATH = Path("processing_log.json")
 
 # Embedding
-EMBEDDING_MODEL_NAME = "intfloat/multilingual-e5-large"
+EMBEDDING_MODEL_NAME = "intfloat/multilingual-e5-large"  # RU-only alt: ai-forever/ru-en-RoSBERTa
 
 # Chunking
 MAX_CHUNK_TOKENS = 512
@@ -50,6 +50,10 @@ UPSERT_BATCH_SIZE = 64
 # --- Telegram Bot ---
 TELEGRAM_BOT_TOKEN: str = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 
+# Allowed Telegram usernames (without @). Empty = allow all.
+# Example: frozenset({"alice", "bob"})
+ACCESS_USERNAMES: frozenset[str] = frozenset()
+
 # --- LLM ---
 LLM_API_KEY: str = os.environ.get("LLM_API_KEY", "")
 LLM_MODEL: str = "gpt-4.1-mini"
@@ -59,7 +63,8 @@ LLM_BASE_URL: str = "https://api.openai.com/v1"
 RAG_TOP_K: int = 5  # final number of chunks sent to LLM
 RAG_MMR_K: int = 10  # diverse candidates selected by MMR
 RAG_FETCH_K: int = 20  # initial vector search candidates for MMR
-RERANKER_MODEL: str = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
+RAG_SHOW_SOURCES: bool = True  # show source filenames in bot response
+RERANKER_MODEL: str = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"  # RU-only alt: DiTy/cross-encoder-russian-msmarco
 RAG_SYSTEM_PROMPT: str = (
     "Ты — ассистент, отвечающий на вопросы по научным статьям. "
     "Отвечай ТОЛЬКО на основе предоставленного контекста. "
