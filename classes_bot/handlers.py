@@ -7,7 +7,7 @@ from aiogram.types import FSInputFile, Message
 
 from classes_bot.exceptions import LLMError, VectorStoreError
 from classes_bot.rag_chain import RAGChain, RAGResult
-from config import ACCESS_USERNAMES, RAG_SHOW_SOURCES, SOURCE_MD_DIR
+from config import ACCESS_USERNAMES, PROTECT_CONTENT, RAG_SHOW_SOURCES, SOURCE_MD_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -57,12 +57,12 @@ class MessageHandler:
         if not text.strip():
             text = "Не удалось сформировать ответ."
 
-        await message.answer(text)
+        await message.answer(text, protect_content=PROTECT_CONTENT)
 
         for img_path in result.image_paths:
             path = SOURCE_MD_DIR / img_path
             if path.exists():
-                await message.answer_photo(FSInputFile(path))
+                await message.answer_photo(FSInputFile(path), protect_content=PROTECT_CONTENT)
             else:
                 logger.warning("Image file not found: %s", path)
 

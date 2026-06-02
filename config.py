@@ -53,6 +53,7 @@ TELEGRAM_BOT_TOKEN: str = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 # Allowed Telegram usernames (without @). Empty = allow all.
 # Example: frozenset({"alice", "bob"})
 ACCESS_USERNAMES: frozenset[str] = frozenset()
+PROTECT_CONTENT: bool = True  # disable message forwarding/saving in Telegram
 
 # --- LLM ---
 LLM_API_KEY: str = os.environ.get("LLM_API_KEY", "")
