@@ -111,7 +111,7 @@ class PdfConverter(BaseConverter):
                         images_scale=2.0,
                         do_formula_enrichment=enrichments,
                         do_picture_classification=enrichments,
-                        do_picture_description=enrichments,
+                        do_picture_description=False,
                     ),
                 ),
             },
