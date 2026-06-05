@@ -81,6 +81,7 @@ class PdfConverter(BaseConverter):
                     "Enriched conversion failed for '%s': %s. Retrying without enrichments...",
                     pdf_path.name,
                     e,
+                    exc_info=True,
                 )
                 return self._convert_one(pdf_path, needs_ocr, enrichments=False, errors=errors)
             errors.append(f"Failed to convert '{pdf_path.name}': {e}")
