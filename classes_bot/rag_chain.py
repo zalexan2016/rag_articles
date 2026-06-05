@@ -28,7 +28,7 @@ class RAGChain:
         self._llm = llm
 
     async def process(self, question: str) -> RAGResult:
-        logger.info("Processing question: %s", question)
+        logger.debug("Processing question: %s", question)
 
         chunks = await self._retriever.search(question)
 
@@ -50,7 +50,7 @@ class RAGChain:
             part = f"{header}\n{chunk.page_content}"
             context_parts.append(part)
         context = "\n\n".join(context_parts)
-        logger.info("Built context from %s chunks", len(chunks))
+        logger.debug("Built context from %s chunks", len(chunks))
 
         messages = [
             SystemMessage(content=RAG_SYSTEM_PROMPT),
@@ -76,7 +76,7 @@ class RAGChain:
         # Извлекаем только те картинки, которые LLM упомянула в ответе
         image_paths = _IMAGE_IN_ANSWER.findall(answer)
 
-        logger.info("Sources: %s, Images: %s", sources, image_paths)
+        logger.debug("Sources: %s, Images: %s", sources, image_paths)
         # Убираем теги [source: ...] и [image: ...] из текста ответа
         answer = _SOURCE_IN_ANSWER.sub("", answer)
         answer = _IMAGE_IN_ANSWER.sub("", answer).strip()

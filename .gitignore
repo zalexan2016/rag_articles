@@ -19,6 +19,7 @@ uv.lock
 processing_log.json
 chroma_db/
 bot.log
+*.pid
 
 # Source data (PDFs and converted files)
 source/pdf/*

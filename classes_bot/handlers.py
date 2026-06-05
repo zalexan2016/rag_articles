@@ -1,4 +1,5 @@
 import logging
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from aiogram import F, Router
@@ -12,9 +13,19 @@ from config import ACCESS_USERNAMES, PROTECT_CONTENT, RAG_SHOW_SOURCES, SOURCE_M
 logger = logging.getLogger(__name__)
 
 
+@dataclass
+class BotStats:
+    user_ids: set[int] = field(default_factory=set)
+
+    @property
+    def unique_users(self) -> int:
+        return len(self.user_ids)
+
+
 class MessageHandler:
     def __init__(self, rag_chain: RAGChain):
         self._rag_chain = rag_chain
+        self._stats = BotStats()
         self.router = Router()
         self.router.message.register(self.handle_text, F.text)
         self.router.message.register(self.handle_unsupported)
@@ -25,6 +36,8 @@ class MessageHandler:
             await message.answer("⛔ Доступ запрещён.")
             return
         logger.info("Question from user %s: %s", message.from_user.id, message.text)
+        self._stats.user_ids.add(message.from_user.id)
+        logger.info("Unique users: %s", self._stats.unique_users)
         await message.bot.send_chat_action(chat_id=message.chat.id, action=ChatAction.TYPING)
 
         try:

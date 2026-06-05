@@ -120,10 +120,10 @@ uv run python main.py --bot
 **Фоновый режим:**
 
 ```bash
-nohup uv run python main.py --bot > bot.log 2>&1 &
+nohup uv run python main.py --bot > bot.log 2>&1 & echo $! > bot.pid
 ```
 
-Остановить: `kill $(pgrep -f "main.py --bot")`
+Остановить: `kill $(cat bot.pid) && rm bot.pid`
 
 ### Комбинированный запуск
 

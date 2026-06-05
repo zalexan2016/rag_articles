@@ -26,14 +26,14 @@ class Retriever:
                 fetch_k=RAG_FETCH_K,
                 filter=build_search_filter(),
             )
-            logger.info("MMR returned %s candidates", len(candidates))
+            logger.debug("MMR returned %s candidates", len(candidates))
 
             if not candidates:
                 return []
 
             # Stage 2: Cross-encoder reranks candidates (in thread to avoid blocking event loop)
             results = await asyncio.to_thread(self._rerank, query, candidates)
-            logger.info("Reranker selected %s chunks", len(results))
+            logger.debug("Reranker selected %s chunks", len(results))
             return results
         except Exception as e:
             msg = f"Vector store search failed: {e}"
@@ -41,7 +41,7 @@ class Retriever:
 
     def _rerank(self, query: str, documents: list[Document]) -> list[Document]:
         pairs: list[tuple[str, str]] = [(query, doc.page_content) for doc in documents]
-        scores: list[float] = self._reranker.predict(pairs).tolist()
+        scores: list[float] = self._reranker.predict(pairs, show_progress_bar=False).tolist()
 
         try:
             scored_docs = sorted(

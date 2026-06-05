@@ -24,6 +24,9 @@ LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 # 1 — use local HuggingFace cache (offline), 0 — allow downloading
 os.environ["HF_HUB_OFFLINE"] = "1"
 
+# Disable tqdm progress bars from sentence-transformers and safetensors
+os.environ["TQDM_DISABLE"] = "1"
+
 # --- Text Processing Pipeline ---
 PROCESSING_LOG_PATH = Path("processing_log.json")
 
