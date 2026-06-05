@@ -38,8 +38,10 @@ source/
 ### Системные зависимости (Ubuntu/Debian)
 
 ```bash
-sudo apt-get install -y libgl1
+sudo apt-get install -y libgl1 gcc python3.12-dev
 ```
+
+> `gcc` и `python3.12-dev` требуются для компиляции Triton-ядер при конвертации с флагом `--gpu`.
 
 ### Python-зависимости
 
