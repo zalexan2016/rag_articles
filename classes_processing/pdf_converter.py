@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 import pypdfium2 as pdfium
-from docling.datamodel.pipeline_options import PdfPipelineOptions
+from docling.datamodel.pipeline_options import EasyOcrOptions, PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling_core.types.doc.base import ImageRefMode
 
@@ -12,6 +12,7 @@ from config import (
     IMAGES_MD_DIR,
     MD_EXTENSION,
     MIN_TEXT_CHARS_PER_PAGE,
+    OCR_LANGUAGES,
     PDF_EXTENSION,
     PDF_OCR_MODE,
     PDF_SOURCE_DIR,
@@ -109,19 +110,21 @@ class PdfConverter(BaseConverter):
         return True
 
     def _make_converter(self, ocr: bool, enrichments: bool) -> DocumentConverter:
+        pipeline_options = PdfPipelineOptions(
+            do_ocr=ocr,
+            generate_picture_images=True,
+            generate_page_images=False,
+            images_scale=2.0,
+            do_formula_enrichment=enrichments,
+            do_picture_classification=enrichments,
+            do_picture_description=False,
+        )
+        if ocr:
+            pipeline_options.ocr_options = EasyOcrOptions(lang=OCR_LANGUAGES)
+
         return DocumentConverter(
             format_options={
-                "pdf": PdfFormatOption(
-                    pipeline_options=PdfPipelineOptions(
-                        do_ocr=ocr,
-                        generate_picture_images=True,
-                        generate_page_images=False,
-                        images_scale=2.0,
-                        do_formula_enrichment=enrichments,
-                        do_picture_classification=enrichments,
-                        do_picture_description=False,
-                    ),
-                ),
+                "pdf": PdfFormatOption(pipeline_options=pipeline_options),
             },
         )
 

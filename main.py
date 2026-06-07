@@ -38,7 +38,7 @@ def run_convert(gpu: bool = False) -> None:
     converter.run()
 
 
-def run_postprocess() -> None:
+def run_postprocess(gpu: bool = False) -> None:
     if not SOURCE_MD_DIR.exists():
         logger.error("Source directory '%s' does not exist.", SOURCE_MD_DIR)
         return
@@ -48,7 +48,7 @@ def run_postprocess() -> None:
         logger.warning("No MD files found in '%s'.", SOURCE_MD_DIR)
         return
 
-    processor = PostProcessor()
+    processor = PostProcessor(gpu=gpu)
     for md_path in md_files:
         content = md_path.read_text(encoding="utf-8")
         result = processor.process(content)
@@ -122,8 +122,8 @@ def main() -> None:
         parser.print_help()
         return
 
-    if args.gpu and not args.convert_pdf:
-        parser.error("--gpu can only be used with --convert-pdf")
+    if args.gpu and not args.convert_pdf and not args.postprocess:
+        parser.error("--gpu can only be used with --convert-pdf or --postprocess")
 
     active_flags = sum(1 for v in vars(args).values() if v)
 
@@ -137,7 +137,7 @@ def main() -> None:
         run_convert(gpu=args.gpu)
 
     if args.postprocess:
-        run_postprocess()
+        run_postprocess(gpu=args.gpu)
 
     if args.pipeline:
         run_pipeline()

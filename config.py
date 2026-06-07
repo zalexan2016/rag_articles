@@ -17,6 +17,8 @@ MD_EXTENSION = ".md"
 MIN_TEXT_CHARS_PER_PAGE = 50
 # OCR mode: None = auto-detect, True = always on, False = always off
 PDF_OCR_MODE: bool | None = None
+# EasyOCR languages for table image recognition
+OCR_LANGUAGES: list[str] = ["ru", "en"]
 
 # Logging
 LOG_LEVEL = logging.INFO

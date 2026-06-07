@@ -1,7 +1,11 @@
 import logging
 import re
+from pathlib import Path
 
+import easyocr
 import ftfy
+
+from config import OCR_LANGUAGES, SOURCE_MD_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +20,18 @@ class PostProcessor:
     _PUA_CHARS = re.compile(r"[\ue000-\uf8ff]")
     _GLYPH_CODES = re.compile(r"/g\d+")
     _IMAGE_TAG = re.compile(r"!\[Image\]\(([^)]+)\)")
+    _IMAGE_WITH_CLASS = re.compile(r"(!\[Image\]\(([^)]+)\))\n\n?(\w[\w\s]*)")
+
+    def __init__(self, md_dir: Path = SOURCE_MD_DIR, gpu: bool = False):
+        self._md_dir = md_dir
+        self._gpu = gpu
+        self._ocr_reader = None
 
     def process(self, text: str) -> str:
         logger.info("Starting text post-processing, input length: %s chars", len(text))
+
+        # OCR table images before other transformations change tags
+        text = self._ocr_table_images(text)
 
         text = ftfy.fix_text(text)
 
@@ -47,6 +60,49 @@ class PostProcessor:
 
         logger.info("Post-processing complete, output length: %s chars", len(text))
         return text
+
+    def _ocr_table_images(self, text: str) -> str:
+        result = []
+        last_end = 0
+
+        for match in self._IMAGE_WITH_CLASS.finditer(text):
+            img_tag = match.group(1)
+            img_path = match.group(2)
+            class_label = match.group(3).strip()
+
+            result.append(text[last_end:match.start()])
+
+            if class_label != "Table":
+                result.append(match.group(0))
+            else:
+                abs_path = self._md_dir / img_path
+                if not abs_path.exists():
+                    logger.warning("Table image not found: %s", abs_path)
+                    result.append(match.group(0))
+                else:
+                    try:
+                        ocr_text = self._run_ocr(abs_path)
+                        if ocr_text:
+                            logger.info("OCR extracted %s chars from table: %s", len(ocr_text), img_path)
+                            result.append(f"{img_tag}\n{ocr_text}")
+                        else:
+                            result.append(match.group(0))
+                    except Exception as e:
+                        logger.error("OCR failed for '%s': %s", img_path, e)
+                        result.append(match.group(0))
+
+            last_end = match.end()
+
+        result.append(text[last_end:])
+        return "".join(result)
+
+    def _run_ocr(self, image_path: Path) -> str:
+        if self._ocr_reader is None:
+            self._ocr_reader = easyocr.Reader(OCR_LANGUAGES, gpu=self._gpu)
+
+        results = self._ocr_reader.readtext(str(image_path))
+        lines = [text for _, text, _ in results]
+        return "\n".join(lines) if lines else ""
 
     def _is_skip_line(self, line: str) -> bool:
         stripped = line.strip()

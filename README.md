@@ -96,7 +96,13 @@ uv run python main.py --convert-pdf --gpu
 uv run python main.py --postprocess
 ```
 
-Нормализует MD-файлы in-place (ftfy, удаление артефактов конвертации, объединение переносов). После этого шага можно проверить и подправить файлы вручную перед индексацией.
+Нормализует MD-файлы in-place (ftfy, удаление артефактов конвертации, объединение переносов). Картинки с классом `Table` распознаются через EasyOCR — текст вставляется рядом с картинкой для поиска. После этого шага можно проверить и подправить файлы вручную перед индексацией.
+
+Флаг `--gpu` ускоряет OCR-распознавание таблиц:
+
+```bash
+uv run python main.py --postprocess --gpu
+```
 
 ### Запуск пайплайна обработки
 
@@ -182,6 +188,7 @@ LLM_BASE_URL = "https://api.openai.com/v1"
 | `ACCESS_USERNAMES` | `frozenset()` | Разрешённые Telegram-username (без @). Пусто = доступ для всех |
 | `RAG_SHOW_SOURCES` | `True` | Показывать источники в ответе бота |
 | `PDF_OCR_MODE` | `None` | OCR: `None` = автоопределение, `True` = всегда, `False` = никогда |
+| `OCR_LANGUAGES` | `["ru", "en"]` | Языки OCR для Docling и EasyOCR |
 
 ## Retrieval-пайплайн
 
