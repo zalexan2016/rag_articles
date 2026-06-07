@@ -90,6 +90,14 @@ uv run python main.py --convert-pdf --gpu
 
 > `--gpu` можно использовать только вместе с `--convert-pdf`.
 
+### Пост-обработка текста
+
+```bash
+uv run python main.py --postprocess
+```
+
+Нормализует MD-файлы in-place (ftfy, удаление артефактов конвертации, объединение переносов). После этого шага можно проверить и подправить файлы вручную перед индексацией.
+
 ### Запуск пайплайна обработки
 
 ```bash
@@ -97,9 +105,8 @@ uv run python main.py --pipeline
 ```
 
 Обрабатывает MD-файлы из `source/md/`:
-1. Пост-обработка текста (ftfy, удаление артефактов конвертации)
-2. Чанкинг через HybridChunker (max 512 токенов)
-3. Сохранение в векторную БД (Chroma/Qdrant) с метаданными
+1. Чанкинг через HybridChunker (max 512 токенов)
+2. Сохранение в векторную БД (Chroma/Qdrant) с метаданными
 
 Уже проиндексированные документы пропускаются (инкрементальная обработка по MD5).
 
@@ -130,7 +137,7 @@ nohup uv run python main.py --bot > bot.log 2>&1 & echo $! > bot.pid
 ### Комбинированный запуск
 
 ```bash
-uv run python main.py --convert-pdf --pipeline
+uv run python main.py --convert-pdf --postprocess --pipeline
 ```
 
 ## Конфигурация LLM
@@ -174,6 +181,7 @@ LLM_BASE_URL = "https://api.openai.com/v1"
 | `RERANKER_MODEL` | `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` | Модель переранжирования |
 | `ACCESS_USERNAMES` | `frozenset()` | Разрешённые Telegram-username (без @). Пусто = доступ для всех |
 | `RAG_SHOW_SOURCES` | `True` | Показывать источники в ответе бота |
+| `PDF_OCR_MODE` | `None` | OCR: `None` = автоопределение, `True` = всегда, `False` = никогда |
 
 ## Retrieval-пайплайн
 

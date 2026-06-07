@@ -15,6 +15,8 @@ MD_EXTENSION = ".md"
 
 # Минимальное кол-во символов текста на страницу чтобы считать PDF текстовым
 MIN_TEXT_CHARS_PER_PAGE = 50
+# OCR mode: None = auto-detect, True = always on, False = always off
+PDF_OCR_MODE: bool | None = None
 
 # Logging
 LOG_LEVEL = logging.INFO

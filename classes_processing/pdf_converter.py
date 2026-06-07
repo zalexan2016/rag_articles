@@ -8,7 +8,15 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling_core.types.doc.base import ImageRefMode
 
 from classes_processing.base_converter import BaseConverter, ConversionStats
-from config import IMAGES_MD_DIR, MD_EXTENSION, MIN_TEXT_CHARS_PER_PAGE, PDF_EXTENSION, PDF_SOURCE_DIR, SOURCE_MD_DIR
+from config import (
+    IMAGES_MD_DIR,
+    MD_EXTENSION,
+    MIN_TEXT_CHARS_PER_PAGE,
+    PDF_EXTENSION,
+    PDF_OCR_MODE,
+    PDF_SOURCE_DIR,
+    SOURCE_MD_DIR,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -53,9 +61,9 @@ class PdfConverter(BaseConverter):
         for pdf_path in to_convert:
             pages = len(pdfium.PdfDocument(str(pdf_path)))
             logger.info("Processing: %s (%d pages)...", pdf_path.name, pages)
-            needs_ocr = self._is_scanned_pdf(pdf_path)
+            needs_ocr = self._is_scanned_pdf(pdf_path) if PDF_OCR_MODE is None else PDF_OCR_MODE
             if needs_ocr:
-                logger.info("  Detected as scanned PDF — OCR enabled.")
+                logger.info("  OCR enabled (mode=%s).", "auto" if PDF_OCR_MODE is None else "forced")
             if self._gpu:
                 if self._convert_one(pdf_path, needs_ocr, enrichments=True, errors=stats.errors):
                     stats.converted += 1

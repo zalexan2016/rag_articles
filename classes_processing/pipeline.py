@@ -5,7 +5,6 @@ from pathlib import Path
 from langchain_core.vectorstores import VectorStore
 
 from classes_processing.chunker import Chunker
-from classes_processing.post_processor import PostProcessor
 from classes_processing.processing_log import ProcessingLog
 from config import MD_EXTENSION, PROCESSING_LOG_PATH, SOURCE_MD_DIR, UPSERT_BATCH_SIZE
 
@@ -25,7 +24,6 @@ class PipelineStats:
 class Pipeline:
     def __init__(self, vector_store: VectorStore):
         self._vector_store = vector_store
-        self._post_processor = PostProcessor()
         self._chunker = Chunker()
         self._log = ProcessingLog(PROCESSING_LOG_PATH)
 
@@ -81,15 +79,7 @@ class Pipeline:
         content_hash = ProcessingLog.compute_hash(content)
 
         try:
-            processed_text = self._post_processor.process(content)
-        except OSError as e:
-            logger.error("Failed to post-process '%s': %s", filename, e)
-            stats.failed += 1
-            stats.errors.append(f"Post-processing error: {filename}: {e}")
-            return
-
-        try:
-            chunks = self._chunker.chunk(processed_text, filename, content_hash)
+            chunks = self._chunker.chunk(content, filename, content_hash)
         except OSError as e:
             logger.error("Failed to chunk '%s': %s", filename, e)
             stats.failed += 1
