@@ -4,11 +4,12 @@ from pathlib import Path
 
 from aiogram import F, Router
 from aiogram.enums import ChatAction
+from aiogram.filters import Command
 from aiogram.types import FSInputFile, Message
 
 from classes_bot.exceptions import LLMError, VectorStoreError
 from classes_bot.rag_chain import RAGChain, RAGResult
-from config import ACCESS_USERNAMES, PROTECT_CONTENT, RAG_SHOW_SOURCES, SOURCE_MD_DIR
+from config import ACCESS_USERNAMES, PROTECT_CONTENT, RAG_SHOW_SOURCES, SOURCE_MD_DIR, WELCOME_MESSAGE
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,12 @@ class MessageHandler:
         self._rag_chain = rag_chain
         self._stats = BotStats()
         self.router = Router()
+        self.router.message.register(self.handle_start, Command("start"))
         self.router.message.register(self.handle_text, F.text)
         self.router.message.register(self.handle_unsupported)
+
+    async def handle_start(self, message: Message) -> None:
+        await message.answer(WELCOME_MESSAGE, protect_content=PROTECT_CONTENT)
 
     async def handle_text(self, message: Message) -> None:
         if not self._is_allowed(message):
