@@ -182,9 +182,10 @@ LLM_BASE_URL = "https://api.openai.com/v1"
 | `VECTOR_STORE_TYPE` | `chroma` / `qdrant` | Тип векторной БД |
 | `UPSERT_BATCH_SIZE` | `64` | Размер батча для записи |
 | `RAG_TOP_K` | `5` | Финальное количество чанков для LLM |
-| `RAG_MMR_K` | `10` | Кандидаты после MMR (разнообразие) |
-| `RAG_FETCH_K` | `20` | Начальная выборка для MMR |
+| `RAG_CANDIDATES_K` | `15` | Кандидаты перед реранкингом (MMR для Chroma, hybrid для Qdrant) |
+| `RAG_FETCH_K` | `20` | Начальная выборка для MMR (только Chroma) |
 | `RERANKER_MODEL` | `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` | Модель переранжирования |
+| `QDRANT_SPARSE_MODEL` | `Qdrant/bm25` | Sparse-модель для гибридного поиска (только Qdrant) |
 | `ACCESS_USERNAMES` | `frozenset()` | Разрешённые Telegram-username (без @). Пусто = доступ для всех |
 | `RAG_SHOW_SOURCES` | `True` | Показывать источники в ответе бота |
 | `PDF_OCR_MODE` | `None` | OCR: `None` = автоопределение, `True` = всегда, `False` = никогда |
@@ -192,8 +193,14 @@ LLM_BASE_URL = "https://api.openai.com/v1"
 
 ## Retrieval-пайплайн
 
+**Chroma (MMR):**
 ```
-Запрос → Vector Store (fetch_k=20) → MMR (k=10, разнообразие) → Cross-encoder reranking (top_k=5) → LLM
+Запрос → Vector Store (fetch_k=20) → MMR (candidates_k=15, разнообразие) → Cross-encoder reranking (top_k=5) → LLM
+```
+
+**Qdrant (Hybrid Search):**
+```
+Запрос → Dense + Sparse BM25 поиск → RRF объединение (candidates_k=15) → Cross-encoder reranking (top_k=5) → LLM
 ```
 
 Исключаются секции: Литература, References, Библиографическое описание, Информация об авторах.

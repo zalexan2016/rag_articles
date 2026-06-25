@@ -25,7 +25,7 @@ class PostProcessor:
     def __init__(self, md_dir: Path = SOURCE_MD_DIR, gpu: bool = False):
         self._md_dir = md_dir
         self._gpu = gpu
-        self._ocr_reader = None
+        self._ocr_reader: easyocr.Reader | None = None
 
     def process(self, text: str) -> str:
         logger.info("Starting text post-processing, input length: %s chars", len(text))
