@@ -36,12 +36,13 @@ PROCESSING_LOG_PATH = Path("processing_log.json")
 
 # Embedding
 EMBEDDING_MODEL_NAME = "intfloat/multilingual-e5-large"  # RU-only alt: ai-forever/ru-en-RoSBERTa
+EMBEDDING_VECTOR_SIZE = 1024  # must match the model output dimension
 
 # Chunking
 MAX_CHUNK_TOKENS = 512
 
 # Vector Store
-VECTOR_STORE_TYPE = "chroma"  # "chroma" | "qdrant"
+VECTOR_STORE_TYPE = "qdrant"  # "chroma" | "qdrant"
 
 # DB Chroma
 CHROMA_PERSIST_DIR = "chroma_db"
@@ -66,8 +67,8 @@ PROTECT_CONTENT: bool = True  # disable message forwarding/saving in Telegram
 
 # --- LLM ---
 LLM_API_KEY: str = os.environ.get("LLM_API_KEY", "")
-LLM_MODEL: str = "gpt-4.1-mini"
-LLM_BASE_URL: str = "https://api.openai.com/v1"
+LLM_MODEL: str = "deepseek-v4-flash"
+LLM_BASE_URL: str = "https://api.deepseek.com"
 
 # --- RAG ---
 RAG_TOP_K: int = 5  # final number of chunks sent to LLM

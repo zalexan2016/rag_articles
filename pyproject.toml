@@ -17,6 +17,7 @@ dependencies = [
     "langchain-ollama",
     "pypdfium2",
     "easyocr",
+    "fastembed",
 ]
 
 [project.optional-dependencies]
