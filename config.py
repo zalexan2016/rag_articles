@@ -50,6 +50,7 @@ CHROMA_COLLECTION_NAME = "documents"
 # DB Qdrant (production)
 QDRANT_URL = "http://localhost:6333"
 QDRANT_COLLECTION_NAME = "documents"
+QDRANT_SPARSE_MODEL = "Qdrant/bm25"  # multilingual alt: "Qdrant/bm42-all-minilm-l6-v2-attentions"
 
 # Batch settings
 UPSERT_BATCH_SIZE = 64
@@ -70,8 +71,8 @@ LLM_BASE_URL: str = "https://api.openai.com/v1"
 
 # --- RAG ---
 RAG_TOP_K: int = 5  # final number of chunks sent to LLM
-RAG_MMR_K: int = 10  # diverse candidates selected by MMR
-RAG_FETCH_K: int = 20  # initial vector search candidates for MMR
+RAG_CANDIDATES_K: int = 15  # candidates before reranking (MMR for Chroma, hybrid for Qdrant)
+RAG_FETCH_K: int = 20  # initial vector search pool for MMR (Chroma only)
 RAG_SHOW_SOURCES: bool = True  # show source filenames in bot response
 RERANKER_MODEL: str = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"  # RU-only alt: DiTy/cross-encoder-russian-msmarco
 RAG_SYSTEM_PROMPT: str = (

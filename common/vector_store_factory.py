@@ -1,15 +1,13 @@
 import logging
 
-from langchain_chroma import Chroma
 from langchain_core.vectorstores import VectorStore
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_qdrant import QdrantVectorStore
-from qdrant_client import QdrantClient
 
 from config import (
     CHROMA_COLLECTION_NAME,
     CHROMA_PERSIST_DIR,
     QDRANT_COLLECTION_NAME,
+    QDRANT_SPARSE_MODEL,
     QDRANT_URL,
     VECTOR_STORE_TYPE,
 )
@@ -19,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 def create_vector_store(embeddings: HuggingFaceEmbeddings) -> VectorStore:
     if VECTOR_STORE_TYPE == "chroma":
+        from langchain_chroma import Chroma
         logger.info("Creating Chroma vector store with collection '%s'", CHROMA_COLLECTION_NAME)
         return Chroma(
             collection_name=CHROMA_COLLECTION_NAME,
@@ -26,12 +25,17 @@ def create_vector_store(embeddings: HuggingFaceEmbeddings) -> VectorStore:
             persist_directory=CHROMA_PERSIST_DIR,
         )
     elif VECTOR_STORE_TYPE == "qdrant":
+        from langchain_qdrant import FastEmbedSparse, QdrantVectorStore, RetrievalMode
+        from qdrant_client import QdrantClient
         logger.info("Creating Qdrant vector store at '%s' with collection '%s'", QDRANT_URL, QDRANT_COLLECTION_NAME)
         client = QdrantClient(url=QDRANT_URL)
+        sparse_embeddings = FastEmbedSparse(model_name=QDRANT_SPARSE_MODEL)
         return QdrantVectorStore(
             client=client,
             collection_name=QDRANT_COLLECTION_NAME,
             embedding=embeddings,
+            sparse_embedding=sparse_embeddings,
+            retrieval_mode=RetrievalMode.HYBRID,
         )
     else:
         msg = f"Unknown vector store type: {VECTOR_STORE_TYPE}"
