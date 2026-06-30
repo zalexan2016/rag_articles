@@ -112,20 +112,30 @@ async def run_bot() -> None:
     await bot.start()
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="RAG pipeline CLI")
-    parser.add_argument("--convert-pdf", action="store_true", help="Convert PDF files to Markdown")
-    parser.add_argument("--gpu", action="store_true", help="Enable GPU for convert-pdf enrichments and postprocess OCR")
-    parser.add_argument("--postprocess", action="store_true", help="Post-process MD files in-place")
-    parser.add_argument("--pipeline", action="store_true", help="Run chunking and vectorization pipeline")
-    parser.add_argument("--input", type=str, help="Search query against vector store")
-    parser.add_argument("--bot", action="store_true", help="Start Telegram bot")
-    args = parser.parse_args()
+async def run_api() -> None:
+    from classes_api.server import APIServer
+    from classes_bot.llm_factory import LLMFactory
+    from classes_bot.rag_chain import RAGChain
+    from classes_bot.retriever import Retriever
+    from common.embeddings_factory import create_embeddings
+    from common.vector_store_factory import create_vector_store
 
-    if not any(vars(args).values()):
-        parser.print_help()
-        return
+    try:
+        llm = LLMFactory.create()
+    except Exception as e:
+        logger.error("Failed to create LLM client: %s", e)
+        sys.exit(1)
 
+    embeddings = create_embeddings()
+    vector_store = create_vector_store(embeddings)
+    retriever = Retriever(vector_store)
+    rag_chain = RAGChain(retriever, llm)
+
+    server = APIServer(rag_chain)
+    await server.run()
+
+
+def _validate_args(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
     if args.gpu and not args.convert_pdf and not args.postprocess:
         parser.error("--gpu can only be used with --convert-pdf or --postprocess")
 
@@ -136,6 +146,27 @@ def main() -> None:
 
     if args.bot and active_flags > 1:
         parser.error("--bot cannot be combined with other flags")
+
+    if args.api and active_flags > 1:
+        parser.error("--api cannot be combined with other flags")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="RAG pipeline CLI")
+    parser.add_argument("--convert-pdf", action="store_true", help="Convert PDF files to Markdown")
+    parser.add_argument("--gpu", action="store_true", help="Enable GPU for convert-pdf enrichments and postprocess OCR")
+    parser.add_argument("--postprocess", action="store_true", help="Post-process MD files in-place")
+    parser.add_argument("--pipeline", action="store_true", help="Run chunking and vectorization pipeline")
+    parser.add_argument("--input", type=str, help="Search query against vector store")
+    parser.add_argument("--bot", action="store_true", help="Start Telegram bot")
+    parser.add_argument("--api", action="store_true", help="Start REST API server")
+    args = parser.parse_args()
+
+    if not any(vars(args).values()):
+        parser.print_help()
+        return
+
+    _validate_args(parser, args)
 
     if args.convert_pdf:
         run_convert(gpu=args.gpu)
@@ -151,6 +182,9 @@ def main() -> None:
 
     if args.bot:
         asyncio.run(run_bot())
+
+    if args.api:
+        asyncio.run(run_api())
 
 
 if __name__ == "__main__":

@@ -18,6 +18,8 @@ dependencies = [
     "pypdfium2",
     "easyocr",
     "fastembed",
+    "fastapi",
+    "uvicorn",
 ]
 
 [project.optional-dependencies]

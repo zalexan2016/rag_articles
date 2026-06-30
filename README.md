@@ -140,6 +140,39 @@ nohup uv run python main.py --bot > bot.log 2>&1 & echo $! > bot.pid
 
 Остановить: `kill $(cat bot.pid) && rm bot.pid`
 
+### REST API
+
+```bash
+uv run python main.py --api
+```
+
+Запускает HTTP-сервер на `API_HOST:API_PORT` (по умолчанию `0.0.0.0:8000`).
+
+**Пример запроса:**
+
+```bash
+curl "http://localhost:8000/query?question=что+такое+глюкоза" \
+  -H "Authorization: Bearer your_api_key_here"
+```
+
+**Ответ:**
+
+```json
+{
+  "answer": "Глюкоза — бесцветное кристаллическое вещество...",
+  "sources": ["source/pdf/02_uglevody.pdf"],
+  "image_paths": []
+}
+```
+
+**Фоновый режим:**
+
+```bash
+nohup uv run python main.py --api > api.log 2>&1 & echo $! > api.pid
+```
+
+Остановить: `kill $(cat api.pid) && rm api.pid`
+
 ### Комбинированный запуск
 
 ```bash
@@ -190,6 +223,9 @@ LLM_BASE_URL = "https://api.openai.com/v1"
 | `RAG_SHOW_SOURCES` | `True` | Показывать источники в ответе бота |
 | `PDF_OCR_MODE` | `None` | OCR: `None` = автоопределение, `True` = всегда, `False` = никогда |
 | `OCR_LANGUAGES` | `["ru", "en"]` | Языки OCR для Docling и EasyOCR |
+| `API_KEY` | `.env` | Ключ аутентификации для REST API (Bearer token) |
+| `API_HOST` | `0.0.0.0` | Хост API-сервера |
+| `API_PORT` | `8000` | Порт API-сервера |
 
 ## Retrieval-пайплайн
 

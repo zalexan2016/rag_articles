@@ -60,6 +60,11 @@ UPSERT_BATCH_SIZE = 64
 TELEGRAM_BOT_TOKEN: str = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 WELCOME_MESSAGE: str = "Привет! Я готов ответить на ваши вопросы."
 
+# --- API ---
+API_KEY: str = os.environ.get("API_KEY", "")
+API_HOST: str = "0.0.0.0"
+API_PORT: int = 8000
+
 # Allowed Telegram usernames (without @). Empty = allow all.
 # Example: frozenset({"alice", "bob"})
 ACCESS_USERNAMES: frozenset[str] = frozenset()
