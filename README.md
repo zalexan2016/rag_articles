@@ -9,6 +9,11 @@ main.py                          # Точка входа CLI
 config.py                        # Все настройки
 .env                             # Секреты (не в git)
 .env.example                     # Пример переменных окружения
+core_rag/
+  rag_chain.py                   # RAG-оркестратор (retrieval + LLM)
+  retriever.py                   # MMR/Hybrid + Cross-encoder reranking
+  llm_factory.py                 # Фабрика LLM (DeepSeek/Ollama/OpenAI)
+  exceptions.py                  # Кастомные исключения
 common/
   vector_store_factory.py        # Factory для Chroma/Qdrant
   embeddings_factory.py          # Factory для HuggingFace Embeddings
@@ -16,17 +21,20 @@ common/
 classes_processing/
   base_converter.py              # ABC для конвертеров
   pdf_converter.py               # PDF → Markdown (Docling)
-  pipeline.py                    # Пост-обработка + чанкинг + vectorstore
+  pipeline.py                    # Чанкинг + vectorstore
   chunker.py                     # HybridChunker (Docling) → LangChain Documents
-  post_processor.py              # Нормализация текста (ftfy + regex)
+  post_processor.py              # Нормализация текста (ftfy + regex + OCR таблиц)
   processing_log.py              # Инкрементальная обработка (MD5)
 classes_bot/
   bot.py                         # TelegramBot (aiogram 3.x, polling)
   handlers.py                    # Роутер сообщений
-  rag_chain.py                   # RAG-оркестратор (retrieval + LLM)
-  retriever.py                   # MMR + Cross-encoder reranking
-  llm_factory.py                 # Фабрика LLM (DeepSeek/Ollama/OpenAI)
-  exceptions.py                  # Кастомные исключения
+classes_api/
+  app.py                         # FastAPI app factory
+  auth.py                        # Bearer-token аутентификация
+  router.py                      # APIRouter с эндпоинтом /query
+  schema.py                      # Pydantic-модели запросов/ответов
+  server.py                      # Uvicorn-сервер с graceful shutdown
+  service.py                     # Сервисный слой (обёртка над RAGChain)
 source/
   pdf/                           # Исходные PDF
   md/                            # Результаты конвертации

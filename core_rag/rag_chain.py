@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage, SystemMessage
 
-from classes_bot.exceptions import LLMError
-from classes_bot.retriever import Retriever
 from config import RAG_SYSTEM_PROMPT, RAG_USER_PROMPT
+from core_rag.exceptions import LLMError
+from core_rag.retriever import Retriever
 
 logger = logging.getLogger(__name__)
 

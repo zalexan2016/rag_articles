@@ -4,7 +4,7 @@ import sys
 from aiogram import Bot, Dispatcher
 
 from classes_bot.handlers import MessageHandler
-from classes_bot.rag_chain import RAGChain
+from core_rag.rag_chain import RAGChain
 
 logger = logging.getLogger(__name__)
 

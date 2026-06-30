@@ -5,8 +5,8 @@ import signal
 import uvicorn
 
 from classes_api.app import create_app
-from classes_bot.rag_chain import RAGChain
 from config import API_HOST, API_PORT
+from core_rag.rag_chain import RAGChain
 
 logger = logging.getLogger(__name__)
 

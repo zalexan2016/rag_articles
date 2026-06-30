@@ -5,9 +5,9 @@ from langchain_core.documents import Document
 from langchain_core.vectorstores import VectorStore
 from sentence_transformers import CrossEncoder
 
-from classes_bot.exceptions import VectorStoreError
 from common.search_filter import build_search_filter
 from config import RAG_CANDIDATES_K, RAG_FETCH_K, RAG_TOP_K, RERANKER_MODEL, VECTOR_STORE_TYPE
+from core_rag.exceptions import VectorStoreError
 
 logger = logging.getLogger(__name__)
 

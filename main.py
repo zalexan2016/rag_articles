@@ -88,11 +88,11 @@ def run_search(query: str) -> None:
 
 async def run_bot() -> None:
     from classes_bot.bot import TelegramBot
-    from classes_bot.llm_factory import LLMFactory
-    from classes_bot.rag_chain import RAGChain
-    from classes_bot.retriever import Retriever
     from common.embeddings_factory import create_embeddings
     from common.vector_store_factory import create_vector_store
+    from core_rag.llm_factory import LLMFactory
+    from core_rag.rag_chain import RAGChain
+    from core_rag.retriever import Retriever
     try:
         llm = LLMFactory.create()
     except Exception as e:
@@ -114,11 +114,11 @@ async def run_bot() -> None:
 
 async def run_api() -> None:
     from classes_api.server import APIServer
-    from classes_bot.llm_factory import LLMFactory
-    from classes_bot.rag_chain import RAGChain
-    from classes_bot.retriever import Retriever
     from common.embeddings_factory import create_embeddings
     from common.vector_store_factory import create_vector_store
+    from core_rag.llm_factory import LLMFactory
+    from core_rag.rag_chain import RAGChain
+    from core_rag.retriever import Retriever
 
     try:
         llm = LLMFactory.create()

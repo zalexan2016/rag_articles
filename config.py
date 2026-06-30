@@ -64,6 +64,7 @@ WELCOME_MESSAGE: str = "Привет! Я готов ответить на ваш
 API_KEY: str = os.environ.get("API_KEY", "")
 API_HOST: str = "0.0.0.0"
 API_PORT: int = 8000
+API_IMAGES_ROUTE: str = "/images"
 
 # Allowed Telegram usernames (without @). Empty = allow all.
 # Example: frozenset({"alice", "bob"})

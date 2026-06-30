@@ -7,9 +7,9 @@ from aiogram.enums import ChatAction
 from aiogram.filters import Command
 from aiogram.types import FSInputFile, Message
 
-from classes_bot.exceptions import LLMError, VectorStoreError
-from classes_bot.rag_chain import RAGChain, RAGResult
 from config import ACCESS_USERNAMES, PROTECT_CONTENT, RAG_SHOW_SOURCES, SOURCE_MD_DIR, WELCOME_MESSAGE
+from core_rag.exceptions import LLMError, VectorStoreError
+from core_rag.rag_chain import RAGChain, RAGResult
 
 logger = logging.getLogger(__name__)
 
